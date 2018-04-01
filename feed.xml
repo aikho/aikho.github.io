@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.7.3">Jekyll</generator><link href="https://aikho.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://aikho.github.io/" rel="alternate" type="text/html" /><updated>2018-04-02T00:25:09+03:00</updated><id>https://aikho.github.io/</id><title type="html">AIkho.github.io</title><subtitle>Блог о машинном обучении и разработке интеллектуальных систем</subtitle><author><name>Андрей Хобня</name></author><entry><title type="html">Успехи машинного обучения в цифрах</title><link href="https://aikho.github.io/2018/04/01/measurable-successes-of-ml.html" rel="alternate" type="text/html" title="Успехи машинного обучения в цифрах" /><published>2018-04-01T20:16:51+03:00</published><updated>2018-04-01T20:16:51+03:00</updated><id>https://aikho.github.io/2018/04/01/measurable-successes-of-ml</id><content type="html" xml:base="https://aikho.github.io/2018/04/01/measurable-successes-of-ml.html">&lt;p&gt;Машинное обучение позволяет решать многие задачи гораздо эффективнее других подходов.
+Какие именно задачи и насколько эффективнее? 
+Есть множество примеров успешного применения машинного обучения. Но, как говорил Менделеев, “наука начинается там, где начинается измерение.”
+Поэтому я сделал небольшую подборку успехов машинного обучения с конкретными цифрами.&lt;/p&gt;
+
+&lt;h3 id=&quot;1-ilsvrc-imagenet&quot;&gt;1. ILSVRC (ImageNet)&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&quot;https://aikho.github.io/assets/img/2018-04-01-measurable-successes-of-ml/fig1.jpeg&quot; alt=&quot;Изображения ImageNet&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Это первый пример, который приходит в голову. ILSVRC (ImageNet Large Scale Visual Recognition Challenge) —— известные ежегодные соревнования систем компьютерного зрения, на которых команды исследователей со всего мира соревнуются в разработке систем для решения задач классификации, локализации и обнаружения объектов на изображениях.
+В 2012 году первое место с top-5 error &lt;strong&gt;15.4%&lt;/strong&gt; заняла сверточная нейронная сеть AlexNet [&lt;a href=&quot;#r1&quot;&gt;1&lt;/a&gt;]. При этом второе место заняла система с top-5 error &lt;strong&gt;26.2%&lt;/strong&gt;!
+Такая огромная разбежка в результатах потрясла сообщество исследователей компьютерного зрения и стала начальным рубежом эпохи глубокого обучения.&lt;/p&gt;
+
+&lt;p&gt;C 2012 года архитектуры сверточных нейронных сетей существенно продвинулись. 
+В 2015 году нейронная сеть ResNet от Microsoft Research Asia достигла top-5 error &lt;strong&gt;3.6%&lt;/strong&gt;!
+Значительный результат, учитывая что человек в данном соревновании способен показать top-5 error на уровне 5-10% [&lt;a href=&quot;#r2&quot;&gt;2&lt;/a&gt;].
+Но и этот результат был превзойден. В 2017 году нейронные сети достигли top-5 error &lt;strong&gt;2.3%&lt;/strong&gt; [&lt;a href=&quot;#r3&quot;&gt;3&lt;/a&gt;]!&lt;/p&gt;
+
+&lt;h3 id=&quot;2-Анализ-дермоскопических-изображений&quot;&gt;2. Анализ дермоскопических изображений&lt;/h3&gt;
+&lt;p&gt;В 2017 году в журнале Nature опубликованы результаты исследовательского проекта разработки алгоритмов анализа дермоскопических изображений [&lt;a href=&quot;#r4&quot;&gt;4&lt;/a&gt;].
+Исследователи использовали глубокие сверточные нейронные сети для машинного обучения бинарной классификации между похожими дорокачественными и злокачественными образованиями кожи.
+В результате была достигнута точность классификации &lt;strong&gt;72,1%&lt;/strong&gt;, в то время как два привлеченных дерматолога смогли справиться с данной задачей только в &lt;strong&gt;65,56%&lt;/strong&gt; случаев!
+Возможно, именно машинное обучение сыграет одну из ключевых ролей в победе над раком кожи!&lt;/p&gt;
+
+&lt;h3 id=&quot;3-Обнаружение-метастазов-на-микроскопических-изображениях&quot;&gt;3. Обнаружение метастазов на микроскопических изображениях&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&quot;https://aikho.github.io/assets/img/2018-04-01-measurable-successes-of-ml/fig2.png&quot; alt=&quot;Пример&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Еще один впечатляющий пример применения машинного обучения в медицине. Исследователи представили фреймворк, позволяющий обнаруживать раковые опухоли 100x100 пикселей на гигапиксельных микроскопических изображениях размером 100’000x100’000 пикселей.
+Их способ использует глубокие сверточные нейронные сети и достигает точности &lt;strong&gt;92.4%&lt;/strong&gt;. До этого лучший автоматический метод работал с точностью &lt;strong&gt;82.7%&lt;/strong&gt;, а специалист в области патологий достиг точности &lt;strong&gt;73.2%&lt;/strong&gt; [&lt;a href=&quot;#r5&quot;&gt;5&lt;/a&gt;].&lt;/p&gt;
+
+&lt;h3 id=&quot;4-Игра-Го&quot;&gt;4. Игра Го&lt;/h3&gt;
+&lt;p&gt;Если в шахматы компьютерные программы играют лучше людей с 1997 года, то в игре Го они долгое время даже близко не могли подобраться к победе над гроссмейстерами.
+Но машинное обучение изменило положение вещей. 
+В марте 2016 года система AlphaGo, основанная на глубоком машинном обучении и методе Монте-Карло для поиска в дереве, выиграла со счётом &lt;strong&gt;4—1&lt;/strong&gt; у Ли Седоля [&lt;a href=&quot;#r6&quot;&gt;6&lt;/a&gt;], многократного чемпиона мира по Го.
+В 2017 году улучшенная версия системы AlphaGo Master провела несколько показательных игр и победила во всех, в том числе в игре против команды из пяти профессионалов максимального 9 дана [&lt;a href=&quot;#r7&quot;&gt;7&lt;/a&gt;].&lt;/p&gt;
+
+&lt;h3 id=&quot;5-Шахматы&quot;&gt;5. Шахматы&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&quot;https://aikho.github.io/assets/img/2018-04-01-measurable-successes-of-ml/fig4.png&quot; alt=&quot;Пример&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Разработчики AlphaGo создали обобщенный вариант системы —— AlphaZero, который кроме Го, умеет также играть в шахматы и сеги.
+Долгое время Stockfish считался одним из сильнейших шахматных движков. Из 100 игр против Stockfish с нормальным начальным положением AlphaZero выиграл 25 партий белыми, 3 чёрными и свёл вничью оставшиеся 72 [&lt;a href=&quot;#r8&quot;&gt;8&lt;/a&gt;].&lt;/p&gt;
+
+&lt;h3 id=&quot;6-Фильтрация-спама&quot;&gt;6. Фильтрация спама&lt;/h3&gt;
+&lt;p&gt;Наверное одно из самых первых комерческих применений классического машинного обучения. В 2002 году Пол Грэм писал, что, согласно исследованиям, самый лучший на тот момент спам-фильтр на основе ключевых слов определяет только &lt;strong&gt;24%&lt;/strong&gt; спама при 34% ложноположительных срабатываний [&lt;a href=&quot;#r9&quot;&gt;9&lt;/a&gt;].
+При этом его метод фильтрации спама на основе Байесовского классификатора правильно определял &lt;strong&gt;99.5%&lt;/strong&gt; спама c &lt;strong&gt;0%&lt;/strong&gt; ложноположительных срабатываний [&lt;a href=&quot;#r10&quot;&gt;10&lt;/a&gt;].&lt;/p&gt;
+
+&lt;h3 id=&quot;Вывод&quot;&gt;Вывод&lt;/h3&gt;
+&lt;p&gt;Анализируя эти примеры, мы начинаем лучше понимать в каких задачах машинное обучение работает лучше всего.
+Объективно, это не творческие задачи, в данных задачах необходимо на основе входных данных выбрать верное решение из некоторого ограниченного множества возможных решений.
+Но это те задачи, для которых не существует четких алгоритмов и правил, позволяющих гарантировано получить верный ответ.
+Обычно для таких задач используются различные эвристические методы. И машинное обучение во многих случаях позволяет на основе данных получить лучшие эвристики, которые значительно превосходят спроектированные вручную алгоритмы.
+Поэтому именно машинное обучение позволит нам подойти к решению таких задач, о которых мы раньше не осмеливались и думать!&lt;/p&gt;
+
+&lt;p&gt;Ссылки:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;&lt;a name=&quot;r1&quot;&gt;&lt;/a&gt; &lt;a href=&quot;http://image-net.org/challenges/LSVRC/2012/results.html&quot;&gt;Результаты LSVRC 2012.&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a name=&quot;r2&quot;&gt;&lt;/a&gt; &lt;a href=&quot;http://karpathy.github.io/2014/09/02/what-i-learned-from-competing-against-a-convnet-on-imagenet/&quot;&gt;Замечательная статья Андрея Карпатого о ручном распознавании изображений ImageNet.&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a name=&quot;r3&quot;&gt;&lt;/a&gt; &lt;a href=&quot;http://image-net.org/challenges/LSVRC/2017/results&quot;&gt;Результаты LSVRC 2017.&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a name=&quot;r4&quot;&gt;&lt;/a&gt; A. Esteva, B. Kuprel, R.A. Novoa, J. Ko, S.M. Swetter, H.M. Blau , S. Thrun. Dermatologist-level classification of skin cancer with deep neural networks. Nature 542, 115–118 (2017)&lt;/li&gt;
+  &lt;li&gt;&lt;a name=&quot;r5&quot;&gt;&lt;/a&gt; &lt;a href=&quot;https://arxiv.org/abs/1703.02442&quot;&gt;Detecting Cancer Metastases on Gigapixel Pathology Images (arXiv:1703.02442)&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a name=&quot;r6&quot;&gt;&lt;/a&gt; &lt;a href=&quot;https://www.wired.com/2016/03/final-game-alphago-lee-sedol-big-deal-humanity/&quot;&gt;Why the Final Game Between AlphaGo and Lee Sedol Is Such a Big Deal for Humanity&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a name=&quot;r7&quot;&gt;&lt;/a&gt; &lt;a href=&quot;https://www.wired.co.uk/article/deepmind-go-alphago-china-may-2017&quot;&gt;AlphaGo takes the series title&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a name=&quot;r8&quot;&gt;&lt;/a&gt; &lt;a href=&quot;http://www.bbc.com/news/technology-42251535&quot;&gt;‘Superhuman’ Google AI claims chess crown&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a name=&quot;r9&quot;&gt;&lt;/a&gt; &lt;a href=&quot;http://www.paulgraham.com/falsepositives.html&quot;&gt;Paul Graham. Filters vs. Blacklists&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a name=&quot;r10&quot;&gt;&lt;/a&gt; &lt;a href=&quot;https://www.infoworld.com/article/2674702/technology-business/techology-business-paul-graham-provides-stunning-answer-to-spam-e-mails.html&quot;&gt;Paul Graham provides stunning answer to spam e-mails&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;</content><author><name>Андрей Хобня</name></author><category term="ml" /><summary type="html">Машинное обучение позволяет решать многие задачи гораздо эффективнее других подходов. Какие именно задачи и насколько эффективнее? Есть множество примеров успешного применения машинного обучения. Но, как говорил Менделеев, “наука начинается там, где начинается измерение.” Поэтому я сделал небольшую подборку успехов машинного обучения с конкретными цифрами.</summary></entry></feed>
