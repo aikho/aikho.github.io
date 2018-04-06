@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.4.0 -->
+<title>Насколько универсальна AlphaZero? | AIkho.github.io</title>
+<meta name="generator" content="Jekyll v3.7.3" />
+<meta property="og:title" content="Насколько универсальна AlphaZero?" />
+<meta name="author" content="Андрей Хобня" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Многие представляют AlphaZero как некий искусственный интеллект, который способен автоматически без участия человека обучиться выигрывать в любую игру. Достаточно лишь “объяснить” ей правила. Но так ли это на самом деле? И что значит “объяснить” правила игры AlphaZero? В этом нам поможет разобраться оригинальная публикация разработчиков системы." />
+<meta property="og:description" content="Многие представляют AlphaZero как некий искусственный интеллект, который способен автоматически без участия человека обучиться выигрывать в любую игру. Достаточно лишь “объяснить” ей правила. Но так ли это на самом деле? И что значит “объяснить” правила игры AlphaZero? В этом нам поможет разобраться оригинальная публикация разработчиков системы." />
+<link rel="canonical" href="https://aikho.github.io/2018/04/06/how-universal-is-alpha-zero.html" />
+<meta property="og:url" content="https://aikho.github.io/2018/04/06/how-universal-is-alpha-zero.html" />
+<meta property="og:site_name" content="AIkho.github.io" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-04-06T12:30:00+03:00" />
+<script type="application/ld+json">
+{"description":"Многие представляют AlphaZero как некий искусственный интеллект, который способен автоматически без участия человека обучиться выигрывать в любую игру. Достаточно лишь “объяснить” ей правила. Но так ли это на самом деле? И что значит “объяснить” правила игры AlphaZero? В этом нам поможет разобраться оригинальная публикация разработчиков системы.","author":{"@type":"Person","name":"Андрей Хобня"},"@type":"BlogPosting","url":"https://aikho.github.io/2018/04/06/how-universal-is-alpha-zero.html","headline":"Насколько универсальна AlphaZero?","dateModified":"2018-04-06T12:30:00+03:00","datePublished":"2018-04-06T12:30:00+03:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://aikho.github.io/2018/04/06/how-universal-is-alpha-zero.html"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://aikho.github.io/feed.xml" title="AIkho.github.io" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">AIkho.github.io</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+              <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+              <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/rules/">Правила</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Насколько универсальна AlphaZero?</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2018-04-06T12:30:00+03:00" itemprop="datePublished">Apr 6, 2018
+      </time></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p>Многие представляют <a href="https://ru.wikipedia.org/wiki/AlphaZero">AlphaZero</a> как некий искусственный интеллект, который способен автоматически без участия человека обучиться выигрывать в любую игру.
+Достаточно лишь “объяснить” ей правила. Но так ли это на самом деле? И что значит “объяснить” правила игры AlphaZero?
+В этом нам поможет разобраться оригинальная публикация разработчиков системы.</p>
+
+<p>Итак, откроем статью об AlphaZero на ArXiv.org [<a href="#r1">1</a>] и перейдем сразу к разделу <strong>Domain Knowledge</strong> на странице 12. Мы видим всего 5 пунктов.
+Давайте прочитаем их внимательно и попытаемся проанализировать. Итак, пункт первый:</p>
+<blockquote>
+  <p>1.The input features describing the position, and the output features describing the move,
+are structured as a set of planes; i.e. the neural network architecture is matched to the
+grid-structure of the board.</p>
+</blockquote>
+
+<p>Входные данные позиции игры представляются как множество плоскостей, и архитектура нейронной сети соответствует структуре сетки доски.</p>
+
+<p>Это простое замечание уже вызывает много интересных вопросов. В шахматах, го и сеги доска представляет собой квадратную сетку.
+Это очень удобно для сверточных нейронных сетей. Фильтры в сверточных сетях – это тоже сетки квадратной или прямоугольной формы.
+Сверточные сети хорошо подходят для входных данных в виде матрицы. Но что, если взять игру с доской другой формы? Например, китайские шашки или затрикион?
+В этом случае придется существенно переработать существующие подходы к проектированию архитектуры нейронной сети для AlphaZero.</p>
+
+<p>Кроме того, для каждой новой игры скорее всего потребуется спроектировать свою структуру скрытых слоев сети.
+В статье авторы утверждают, что AlphaZero использует одну и ту же архитектуру нейронной сети для всех трех игр:</p>
+<blockquote>
+  <p>Unless otherwise specified,
+the same algorithm settings, network architecture, and hyper-parameters were used for all
+three games.</p>
+</blockquote>
+
+<p>Здесь есть некоторое противоречие с пунктом номер 1. Скорее всего, имеется ввиду, что различаются лишь входные и выходные слои нейронной сети,
+а скрытые слои имеют одинаковую структуру. Такой подход может работать, если разработчики подобрали архитектуру, которая приемлемо работает для всех трех игр.
+Однако, не исключено, что авторы могли добиться лучших результатов, если бы использовали отдельные оптимизированные для каждой игры архитектуры.
+То, что хорошо работает для одной игры, может не работать (или работать хуже) для другой. No free lunch [<a href="#r2">2</a>].
+Поэтому, вполне вероятно, что, чтобы обучить AplhaZero непохожей на го и шахматы игре на доске странной формы, понадобится спроектировать новую нейронную сеть.
+Каким образом это сделать? Какое количество и размер фильтров использовать в каждом сверточном слое?
+Ответ на это вопрос такой же как и для любой другой задачи машинного обучения. Никто не знает!
+Это творческий процесс, включающий в себя инженерию, науку и интуицию. 
+В любом случае, придется поэкспериментировать, вряд ли оптимальная архитектура получится с первой попытки.
+Поскольку процесс обучения с подкреплением требует большого количества ресурсов, для экспериментов с архитектурой нейронной сети практичней использовать базу данных сыгранных партий.
+Разработчики AlphaZero уже имели опыт обучения сети на партиях го.
+Использовали ли они базы данных партий для предварительной оптимизации архитектуры сети в случае AlphaZero?
+В статье этот вопрос не освещается.</p>
+
+<p>Но перейдем к следующему пункту:</p>
+<blockquote>
+  <p>2.AlphaZero is provided with perfect knowledge of the game rules. These are used during
+MCTS, to simulate the positions resulting from a sequence of moves, to determine game
+termination, and to score any simulations that reach a terminal state.</p>
+</blockquote>
+
+<p>Возможные ходы и проверка условий завершения игры “жестко” запрограммированы и используются при поиске по дереву методом Монте-Карло.</p>
+
+<p>Здесь стоит пояснить, что AlphaZero не использует end-to-end модель машинного обучения. Это гибридная система.
+Она использует нейронную сеть для предсказания наиболее вероятных ходов и оценки позиции. А поиск по дереву методом Монте-Карло используется для выбора лучшего хода.
+Фактически, архитектура AlphaZero похожа на архитектуру классических игровых AI-движков. 
+Но вместо алгоритма альфа-бета отсечения используется более общий алгоритм Монте-Карло поиска по дереву, а вместо запрограммированной эвристической функции оценки, используется сложная нейронная сеть.
+По моему мнению, это очень правильный практичный подход. Однако, его применение требует ручного программирования перебора возможных ходов и различных условий правил.</p>
+
+<blockquote>
+  <p>3.Knowledge of the rules is also used to encode the input planes (i.e. castling, repetition,
+no-progress) and output planes (how pieces move, promotions, and piece drops in shogi).</p>
+</blockquote>
+
+<p>Знание правил также закодировано во входных и выходных плоскостях (матрицах).</p>
+
+<p>Это самый интересный пункт. Чтобы понять, что именно имеется в виду, необходимо обратиться к следующему разделу статьи – <strong>Representation</strong>.
+В этом разделе описаны входные и выходные матрицы нейронной сети для каждой игры и приведена сводная таблица.
+Если мы посмотрим в эту таблицу, то увидим, что, например, для шахмат в качестве входных данных позиции используется 119 матриц.
+119 матриц?! Почему так много? Чтобы разобраться в этом, прочитаем пояснения в данном разделе.</p>
+<blockquote>
+  <p>The M feature planes are composed
+ of binary feature planes indicating the presence of the player’s pieces, with one plane for each
+ piece type, and a second set of planes indicating the presence of the opponent’s pieces.</p>
+</blockquote>
+
+<p>Значит используются двоичные матрицы, по одной для каждого типа фигур. Столько же матриц используется для фигур противоположного цвета.
+В шахматах 6 типов фигур, значит получается 12 матриц для фигур двух противников.
+В таблице также указано еще две матрицы для количества повторений позиции. Это необходимо для учета правила троекратного повторения.
+Получается уже 14 матриц.
+Однако, кроме последней позиции фигур, передаются еще несколько предшествующих позиций:</p>
+<blockquote>
+  <p>The first set of features are repeated for each position in a T = 8-step history.</p>
+</blockquote>
+
+<p>Первое множество атрибутов повторяется для каждой из восьми предшествующих позиций. Т.е. мы имеем уже не 14 матриц, а 14*8=112 матриц.
+Остальные 7 матриц используются для кодирования текущего цвета, номера текущего хода, рокировок и количества обратимых ходов.
+Почему именно 8 предшествующих позиций и как авторы получили данное число? В статье это не уточняется.
+Нам известно лишь, что данное значение хорошо работает для всех трех игр.
+Возможно, значение 8 будет хорошо работать и для других игр, но чтобы это выяснить, необходимо отдельное исследование.</p>
+
+<p>Интересно также как представляются выходные данные. Если посмотреть в сводную таблицу, мы увидим, что ход в шахматах кодируется для AlphaZero при помощи 73 матриц.
+Вот как описывают это авторы:</p>
+<blockquote>
+  <p>A move in chess may be described in two parts: selecting the piece to move, and then
+selecting among the legal moves for that piece. We represent the policy π(a|s) by a 8 × 8 × 73
+stack of planes encoding a probability distribution over 4,672 possible moves. Each of the 8×8
+positions identifies the square from which to “pick up” a piece. The first 56 planes encode
+possible ‘queen moves’ for any piece: a number of squares [1..7] in which the piece will be
+moved, along one of eight relative compass directions {N, NE, E, SE, S, SW, W, NW}. The
+next 8 planes encode possible knight moves for that piece. The final 9 planes encode possible
+underpromotions for pawn moves or captures in two possible diagonals, to knight, bishop or
+rook respectively. Other pawn moves or captures from the seventh rank are promoted to a
+queen.</p>
+</blockquote>
+
+<p>Ход в шахматах можно описать при помощи двух составляющих: позиции фигуры, которой делается ход, и возможного хода для данной фигуры.
+Итак, первые 56 матриц кодируют возможные ходы ферзя для любой фигуры. Почему 56 и что значит “ходы ферзя для любой фигуры”?
+Ферзь может ходить в восьми направлениях. Его можно передвинуть на любое количество клеток от 1 до 7.
+Получаем 7*8=56 возможных ходов. Пешки, ладьи, слоны и короли могут совершать некоторые из этих 56 ходов. Поэтому те же самые 56 матриц используются и для этих фигур.
+Кони ходят другим способом. Поэтому следующие 8 матриц кодируют ходы коней.
+Последние 9 матриц кодируют превращения пешек в коней, слонов и ладей. Почему именно 9 матриц?
+Пешка может попасть на последнюю горизонталь тремя способами: ходом вперед, взятием фигуры по диагонали слева и взятием фигуры по диагонали справа.
+Кодируется три вида превращений: в коня, в слона и в ладью. Получается 9 возможных ходов.
+Остальные ходы пешек на последнюю горизонталь (те самые, которые кодируются первыми 56 матрицами) считаются превращением в ферзей.
+Таким образом, получаем в сумме 73 матрицы.</p>
+
+<p>Как видим, в AlphaZero используются довольно сложные специфические представления игровых позиций и ходов.
+Неизвестно, каким образом авторы пришли именно к таким представлениям.
+Адаптация AlphaZero для новой игры потребует разработки своих представлений позиций и ходов в игре.
+Если судить по представленному выше разбору, это может быть достаточно нетривиальной задачей.</p>
+
+<p>Рассмотрим оставшиеся пункты:</p>
+<blockquote>
+  <p>4.The typical number of legal moves is used to scale the exploration noise (see below).</p>
+</blockquote>
+
+<p>Типичное количество правильных ходов использовано для масштабирования параметра шума.</p>
+
+<p>Добавление шума в обучении с подкреплением используется для создания компромисса между исследованием неизученных областей и применением имеющихся знаний агента.
+В данном случае используется дополнительная информация об игре (типичное количество правильных ходов в позиции) для пропорционального масштабирования параметра шума для данной игры.</p>
+
+<blockquote>
+  <p>5.Chess and shogi games exceeding a maximum number of steps (determined by typical
+game length) were terminated and assigned a drawn outcome; Go games were terminated
+and scored with Tromp-Taylor rules, similarly to previous work (29)</p>
+</blockquote>
+
+<p>Для шахмат и сеги игра останавливается с ничейным результатом при превышении максимального количества ходов, равного типичной длине партии.</p>
+
+<p>Справедливости ради стоит заметить, что типичная длина партии не является частью правил игры, а является дополнительной информацией. 
+Скорее всего, этот параметр используется для упрощения и ускорения обучения.
+Нет смысла ограничивать длину партии только для защиты от перебора бесконечных последовательностей ходов.
+В современных шахматах существует правило 50 ходов [<a href="#r3">3</a>], которое позволяет игроку объявить ничью, если последние 50 ходов были сделаны каждым игроком без перемещения пешек и без взятия любой фигуры.
+Кроме того, из статьи не ясно, каким образом авторы вычислили типичную длину партии.
+Возможно для этого использовались базы партий или другие данные.</p>
+
+<h3 id="Выводы">Выводы</h3>
+
+<p>AlphaZero – это безусловно прорыв, который продемонстрировал возможности и перспективы глубокого обучения с подкреплением.
+Однако, адаптация AlphaZero для других игр и задач достаточно сложна и потребует усилий по программированию перебора ходов и условий правил, исследованию и проектированию нейронных сетей.
+AlphaZero не может автоматически “настроиться” на новую игру. В будущих статьях я планирую показать, каким образом можно построить похожую систему 
+и обучить ее выигрывать в какой-нибудь экзотической или придуманной игре.</p>
+
+<p>А что вы думаете про AlphaZero? Является ли AlphaZero шагом к генерализированному AI или удачно спроектированной для трех игр специализированной гибридной системой?</p>
+
+<p>Ссылки:</p>
+<ol>
+  <li><a name="r1"></a> <a href="https://arxiv.org/pdf/1712.01815.pdf">Mastering Chess and Shogi by Self-Play with a General Reinforcement Learning Algorithm</a></li>
+  <li><a name="r2"></a> <a href="https://en.wikipedia.org/wiki/No_free_lunch_theorem">No free lunch theorem</a></li>
+  <li><a name="r3"></a> <a href="https://ru.wikipedia.org/wiki/%D0%9F%D1%80%D0%B0%D0%B2%D0%B8%D0%BB%D0%BE_50_%D1%85%D0%BE%D0%B4%D0%BE%D0%B2">Правило 50 ходов</a></li>
+</ol>
+
+  </div><div id="disqus_thread"></div>
+  <script>
+    var disqus_config = function () {
+      this.page.url = 'https://aikho.github.io/2018/04/06/how-universal-is-alpha-zero.html';
+      this.page.identifier = 'https://aikho.github.io/2018/04/06/how-universal-is-alpha-zero.html';
+    };
+
+    (function() {
+      var d = document, s = d.createElement('script');
+
+      s.src = 'https://andrei-khobnia-blog.disqus.com/embed.js';
+
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript><a class="u-url" href="/2018/04/06/how-universal-is-alpha-zero.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">AIkho.github.io</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Андрей Хобня</li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>Блог о машинном обучении и разработке интеллектуальных систем</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
