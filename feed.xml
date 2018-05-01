@@ -1,4 +1,111 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.7.3">Jekyll</generator><link href="https://aikho.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://aikho.github.io/" rel="alternate" type="text/html" /><updated>2018-04-24T23:16:14+03:00</updated><id>https://aikho.github.io/</id><title type="html">AIkho.github.io</title><subtitle>Блог о машинном обучении и разработке интеллектуальных систем</subtitle><author><name>Андрей Хобня</name></author><entry><title type="html">Увеличение скорости машинного обучения</title><link href="https://aikho.github.io/2018/04/24/machine-learning-training-performance.html" rel="alternate" type="text/html" title="Увеличение скорости машинного обучения" /><published>2018-04-24T23:10:00+03:00</published><updated>2018-04-24T23:10:00+03:00</updated><id>https://aikho.github.io/2018/04/24/machine-learning-training-performance</id><content type="html" xml:base="https://aikho.github.io/2018/04/24/machine-learning-training-performance.html">&lt;p&gt;Большинство последних улучшений и прорывов в машинном обучении происходило в основном в области создания моделей, которые обучаются лучше, чем их предшественники.
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.7.3">Jekyll</generator><link href="https://aikho.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://aikho.github.io/" rel="alternate" type="text/html" /><updated>2018-05-01T18:41:04+03:00</updated><id>https://aikho.github.io/</id><title type="html">AIkho.github.io</title><subtitle>Блог о машинном обучении и разработке интеллектуальных систем</subtitle><author><name>Андрей Хобня</name></author><entry><title type="html">Что автоматизирует AutoML?</title><link href="https://aikho.github.io/2018/05/01/what-does-automl-automate.html" rel="alternate" type="text/html" title="Что автоматизирует AutoML?" /><published>2018-05-01T18:20:00+03:00</published><updated>2018-05-01T18:20:00+03:00</updated><id>https://aikho.github.io/2018/05/01/what-does-automl-automate</id><content type="html" xml:base="https://aikho.github.io/2018/05/01/what-does-automl-automate.html">&lt;p&gt;В мае 2017 года исследователи из Google Brain team представили &lt;a href=&quot;https://research.googleblog.com/2017/05/using-machine-learning-to-explore.html&quot;&gt;AutoML&lt;/a&gt; – алгоритм,
+который позволяет автоматически создавать архитектуры нейронных сетей, используя обучение с подкреплением. Через несколько месяцев они успешно применили AutoML
+для создания нейросети &lt;a href=&quot;https://research.googleblog.com/2017/11/automl-for-large-scale-image.html&quot;&gt;NASNet&lt;/a&gt;. Многие высказывали мнение, что теперь создавать
+нейронные сети сможет каждый и не нужны будут специалисты в этой области. Однако, на данный момент создавать новые модели машинного обучения все так же сложно.
+Так что же сделали в Google Brain team? В этом нам помогут разобраться публикации авторов AutoML.&lt;/p&gt;
+
+&lt;p&gt;Сразу следует отметить, что сама идея метаобучения (обучения алгоритмов и моделей обучения, meta learning [&lt;a href=&quot;#r1&quot;&gt;1&lt;/a&gt;])
+не нова. Работы в данной области публикуют примерно с 1991 года. Обучение с подкреплением не единственный метод метаобучения. Рассматриваются также генетические
+алгоритмы и другие подходы. Но давайте перейдем непосредственно к научной статье авторов AutoML [&lt;a href=&quot;#r2&quot;&gt;2&lt;/a&gt;].&lt;/p&gt;
+
+&lt;p&gt;В разделе “3 Methods”, а именно в “3.1 Generate model descriptions with a controller recurrent neural network” авторы пишут:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;In Neural Architecture Search, we use a controller to generate architectural hyperparameters of
+neural networks. To be flexible, the controller is implemented as a recurrent neural network.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Авторы обучают рекуррентную нейронную сеть, называемую контроллером, выводить гиперпараметры искомой архитектуры нейронной сети.&lt;/p&gt;
+
+&lt;p&gt;Далее в данном разделе приводится пример предсказания архитектуры нейронной сети, состоящей из одних сверточных слоев. В данном примере, рекуррентная сеть выводит последовательно
+5 гиперпараметров для каждого слоя: высота фильтра, ширина фильтра, высота шага, ширина шага и количество фильтров.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Once the controller RNN finishes generating an architecture, a neural network with this architecture is built
+and trained. At convergence, the accuracy of the network on a held-out validation set is recorded.
+The parameters of the controller RNN, θc, are then optimized in order to maximize the expected
+validation accuracy of the proposed architectures. In the next section, we will describe a policy
+gradient method which we use to update parameters θc so that the controller RNN generates better
+architectures over time.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;После того как контроллер сгенерировал гиперпараметры, строится архитектура новой нейронной сети, затем созданная сеть обучается, вычисляется ее точность.
+Затем на основе данной обратной связи происходит обучение нейронной сети контроллера. Таким образом, контроллер обучается генерировать лучшие гиперпараметры архитектуры
+при помощи обучения с подкреплением.&lt;/p&gt;
+
+&lt;p&gt;Т.е. &lt;strong&gt;AutoML не генерирует произвольные архитектуры&lt;/strong&gt;. Чтобы использовать AutoML для своей задачи, необходимо определить нечто вроде &lt;em&gt;метаархитектуры&lt;/em&gt; нейронной сети:
+типы слоев, соединений, изменяемые гиперпараметры и т.д.&lt;/p&gt;
+
+&lt;p&gt;Но если AutoML не генерирует произвольные архитектуры, каким образом тогда она сгенерировала новый тип рекуррентных слоев? Посмотрим, что пишут об этом авторы в разделе 3.4:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;The computations for basic RNN and LSTM cells can be generalized as a tree of steps that take xt
+and ht−1 as inputs and produce ht as final output. The controller RNN needs to label each node in
+the tree with a combination method (addition, elementwise multiplication, etc.) and an activation
+function (tanh, sigmoid, etc.) to merge two inputs and produce one output. Two outputs are then
+fed as inputs to the next node in the tree. To allow the controller RNN to select these methods and
+functions, we index the nodes in the tree in an order so that the controller RNN can visit each node
+one by one and label the needed hyperparameters.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Авторы представили рекуррентную ячейку как дерево с тремя узлами. Каждому узлу соответствует функция комбинации и функция активации.
+Функции выбираются из списка. Нейронная сеть контроллера учится выбирать функции, которые дадут лучший результат.&lt;/p&gt;
+
+&lt;p&gt;Хорошо, но каким образом удалось применить AutoML для создания NASNet, ведь архитектура NASNet достаточно сложна?
+Изучим соответствующую работу [&lt;a href=&quot;#r3&quot;&gt;3&lt;/a&gt;]. В разделе “3. Method” авторы пишут:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;In our approach, the overall architectures of the convolutional
+nets are manually predetermined. They are composed
+of convolutional cells repeated many times where
+each convolutional cell has the same architecture, but different
+weights.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Архитектуры сверточных сетей предопределены вручную. Они состоят из сверточных блоков, которые повторяются множество раз и имеют одинаковую архитектуру,
+но различные веса. Это похоже на идею архитектуры Inception, которая тоже состоит из повторяющихся блоков.&lt;/p&gt;
+
+&lt;p&gt;В этом же разделе авторы пишут:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;The main contribution of this work is the design of a
+novel search space, such that the best architecture found
+on the CIFAR-10 dataset would scale to larger, higher-resolution
+image datasets across a range of computational
+settings.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Т.е. авторы тренируют AutoML на датасете CIFAR-10. Получают оптимальную архитектуру сверточного блока. Затем из полученных одинаковых блоков строят нейронную сеть
+для датасета изображений с более высоким разрешением, т.е. ImageNet. Основной принцип сохраняется – сначала определяется метаархитектура и ее гиперпараметры,
+затем осуществляется поиск оптимальных значений гиперпараметров при помощи машинного обучения с подкреплением.&lt;/p&gt;
+
+&lt;p&gt;Зачем оптимизировать архитектуру блока на CIFAR-10, а потом пытаться ее масштабировать на ImageNet? Почему бы не применить AutoML непосредственно к ImageNet?
+Чтобы в этом разобраться, обратим внимание на данные из раздела “4. Experiments and Results”:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;The method in this paper
+uses 500 GPUs across 4 days resulting in 2,000 GPU-hours. The former
+effort used Nvidia K40 GPUs, whereas the current efforts used faster
+NVidia P100s.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Карта NVidia P100s сейчас стоит примерно &lt;a href=&quot;https://www.amazon.com/gp/offer-listing/B06WV7HFWV/?ie=UTF8&amp;amp;condition=new&quot;&gt;6’500$&lt;/a&gt;.
+Авторы использовали 500 штук. Получается, чтобы обучить AutoML за 4 дня даже на таком “игрушечном” датасете как CIFAR-10, необходимо
+иметь доступ к оборудованию на 3’250’000$? На данный момент это так. А чтобы обучать AutoML на ImageNet, необходимо ресурсов
+минимум на пару порядков больше.&lt;/p&gt;
+
+&lt;h3 id=&quot;Выводы&quot;&gt;Выводы&lt;/h3&gt;
+
+&lt;p&gt;AutoML – неплохой метод тюнинга архитектуры моделей машинного обучения. Однако, он не способен решить вашу задачу автоматически.
+Для того, чтобы использовать AutoML для новой задачи, необходимо задать метаархитектуру модели (нейронной сети): типы слоев, соединений,
+изменяемые гиперпараметры и т.д. Кроме того, применение AutoML требует использования большого количества вычислительных ресурсов.&lt;/p&gt;
+
+&lt;p&gt;Ссылки:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;&lt;a name=&quot;r1&quot;&gt;&lt;/a&gt; &lt;a href=&quot;https://en.wikipedia.org/wiki/Meta_learning_(computer_science)&quot;&gt;Meta Learning&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a name=&quot;r2&quot;&gt;&lt;/a&gt; &lt;a href=&quot;https://arxiv.org/abs/1611.01578&quot;&gt;Neural Architecture Search with Reinforcement Learning (arXiv:1611.01578)&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a name=&quot;r3&quot;&gt;&lt;/a&gt; &lt;a href=&quot;https://arxiv.org/abs/1707.07012&quot;&gt;Learning Transferable Architectures for Scalable Image Recognition (arXiv:1707.07012)&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;</content><author><name>Андрей Хобня</name></author><category term="ML" /><category term="Метаобучение" /><summary type="html">В мае 2017 года исследователи из Google Brain team представили AutoML – алгоритм, который позволяет автоматически создавать архитектуры нейронных сетей, используя обучение с подкреплением. Через несколько месяцев они успешно применили AutoML для создания нейросети NASNet. Многие высказывали мнение, что теперь создавать нейронные сети сможет каждый и не нужны будут специалисты в этой области. Однако, на данный момент создавать новые модели машинного обучения все так же сложно. Так что же сделали в Google Brain team? В этом нам помогут разобраться публикации авторов AutoML.</summary></entry><entry><title type="html">Увеличение скорости машинного обучения</title><link href="https://aikho.github.io/2018/04/24/machine-learning-training-performance.html" rel="alternate" type="text/html" title="Увеличение скорости машинного обучения" /><published>2018-04-24T23:10:00+03:00</published><updated>2018-04-24T23:10:00+03:00</updated><id>https://aikho.github.io/2018/04/24/machine-learning-training-performance</id><content type="html" xml:base="https://aikho.github.io/2018/04/24/machine-learning-training-performance.html">&lt;p&gt;Большинство последних улучшений и прорывов в машинном обучении происходило в основном в области создания моделей, которые обучаются лучше, чем их предшественники.
 При этом, чем точнее модель, тем, как правило, выше ее вычислительная сложность.
 Конечно, доступные вычислительные мощности растут, железо совершенствуется, развиваются оптимизированные под глубокое обучение библиотеки. Тем не менее,
 работа с наиболее передовыми моделями машинного обучения требует все большего количества ресурсов. Поэтому нам нужны не только более точные модели,
