@@ -179,6 +179,10 @@ table {
   table td {
     border: 1px solid #e8e8e8; }
 
+.center-image {
+  margin: 0 auto;
+  display: block; }
+
 /**
  * Site header
  */

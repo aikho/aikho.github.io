@@ -1,4 +1,102 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.7.3">Jekyll</generator><link href="https://aikho.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://aikho.github.io/" rel="alternate" type="text/html" /><updated>2018-05-02T20:02:15+03:00</updated><id>https://aikho.github.io/</id><title type="html">AIkho.github.io</title><subtitle>Блог о машинном обучении и разработке интеллектуальных систем</subtitle><author><name>Андрей Хобня</name></author><entry><title type="html">Что автоматизирует AutoML?</title><link href="https://aikho.github.io/2018/05/01/what-does-automl-automate.html" rel="alternate" type="text/html" title="Что автоматизирует AutoML?" /><published>2018-05-01T18:20:00+03:00</published><updated>2018-05-01T18:20:00+03:00</updated><id>https://aikho.github.io/2018/05/01/what-does-automl-automate</id><content type="html" xml:base="https://aikho.github.io/2018/05/01/what-does-automl-automate.html">&lt;p&gt;В мае 2017 года исследователи из Google Brain team представили &lt;a href=&quot;https://research.googleblog.com/2017/05/using-machine-learning-to-explore.html&quot;&gt;AutoML&lt;/a&gt; – алгоритм,
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.7.3">Jekyll</generator><link href="https://aikho.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://aikho.github.io/" rel="alternate" type="text/html" /><updated>2018-05-12T00:43:57+03:00</updated><id>https://aikho.github.io/</id><title type="html">AIkho.github.io</title><subtitle>Блог о машинном обучении и разработке интеллектуальных систем</subtitle><author><name>Андрей Хобня</name></author><entry><title type="html">Архитектура чат-ботов с обработкой естественного языка</title><link href="https://aikho.github.io/2018/05/11/architecture-of-task-oriented-chat-bots.html" rel="alternate" type="text/html" title="Архитектура чат-ботов с обработкой естественного языка" /><published>2018-05-11T23:10:00+03:00</published><updated>2018-05-11T23:10:00+03:00</updated><id>https://aikho.github.io/2018/05/11/architecture-of-task-oriented-chat-bots</id><content type="html" xml:base="https://aikho.github.io/2018/05/11/architecture-of-task-oriented-chat-bots.html">&lt;p&gt;В данной статье я попробую систематизировать современные подходы и собственный опыт построения чат-ботов, ориентированных на выполнение специализированных задач,
+формулируемых пользователями на естественном языке. Как правило, такие чат-боты представляют собой гибридные системы, объединяющие модели машинного обучения,
+классические алгоритмы и движки правил. Как они устроены?&lt;/p&gt;
+
+&lt;p&gt;Если обобщить находящуюся в публичном доступе информацию [&lt;a href=&quot;#r1&quot;&gt;1&lt;/a&gt;, &lt;a href=&quot;#r2&quot;&gt;2&lt;/a&gt;, &lt;a href=&quot;#r3&quot;&gt;3&lt;/a&gt;, …] и собственный опыт проектирования чат-ботов, структуру бота можно примерно изобразить следующим образом:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://aikho.github.io/assets/img/2018-05-10-architecture-of-task-oriented-chat-bots/ChatBotDiagram.png&quot; alt=&quot;Архитектура чат-бота&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Разберем устройство каждого блока. Итак, сначала текст пользователя преобразуется в последовательность &lt;strong&gt;токенов&lt;/strong&gt; при помощи токенизатора (&lt;strong&gt;tokenizer&lt;/strong&gt;).
+Как правило, токенизаторы разбивают текст на отдельные слова.&lt;/p&gt;
+
+&lt;p&gt;Допустим, мы создаем бота, который позволяет искать информацию о фьючерсах и курсах валют.
+Пользователь пишет сообщение: “Найди мне цены нефтяных фьючерсов WTI на январь!!!”. Токинизатор разделит данную фразу следующим образом:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://aikho.github.io/assets/img/2018-05-10-architecture-of-task-oriented-chat-bots/text1.png&quot; alt=&quot;Токенизация текста&quot; class=&quot;center-image&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Далее последовательность токенов передается в компонент &lt;strong&gt;распознавания сущностей&lt;/strong&gt; (&lt;strong&gt;entity recognizer&lt;/strong&gt;), который распознает отдельные токены или N-граммы токенов как &lt;strong&gt;сущности&lt;/strong&gt; (&lt;strong&gt;entity&lt;/strong&gt;).
+Типы распознаваемых сущностей зависят от задач, которые выполняет чат-бот. Это могут быть имена, названия, коды, обозначения валют, серийные номера и т.д.
+Для распознавания сущностей используются, как правило, классические алгоритмы: поиск по словарям, регулярные выражения, ключевые слова и т.д.
+Компонент распознавания сущностей генерирует последовательность тегов, которые маркируют токены.
+Зачем предварительно распознавать сущности при помощи обычного поиска, если мы собираемся применить машинное обучение? На это есть несколько причин:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;в обучающем наборе данных могут быть представлены не все возможные сущности;&lt;/li&gt;
+  &lt;li&gt;создание датасета со всеми возможными комбинациями сущностей может быть непрактичным;&lt;/li&gt;
+  &lt;li&gt;данный подход позволяет добавлять новые сущности без переобучения моделей.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;В примере выше название марки нефти WTI является сущностью, которую чат-бот мог бы распознать, используя таблицу наименований фьючерсов.
+Исходная последовательность токенов была бы промаркирована следующей последовательностью тегов:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://aikho.github.io/assets/img/2018-05-10-architecture-of-task-oriented-chat-bots/text2.png&quot; alt=&quot;Распознавание сущностей&quot; class=&quot;center-image&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Где &lt;strong&gt;0&lt;/strong&gt; – токен не относится к сущности, &lt;strong&gt;name&lt;/strong&gt; – токен относится к названию фьючерса.&lt;/p&gt;
+
+&lt;p&gt;Затем последовательность токенов и тегов передается в &lt;strong&gt;векторизатор&lt;/strong&gt; (&lt;strong&gt;vectorizer&lt;/strong&gt;). Векторизатор преобразует отдельные слова в числовые последовательности (векторные представления).
+Для этого могут использоваться модели Word2Vec, GLOVE или FastText, предобученные на больших корпусах текстов. Однако, если задачи бота узкоспециализированные, и
+имеется большой набор данных для обучения, то могут использоваться и самостоятельно обученные модели.
+Перед преобразованием в вектора обычно осуществляется простейший препроцессинг: удаляются стоп-слова, используется стемминг и т.д.
+После преобразования к векторам добавляются признаки тегов сущностей.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://aikho.github.io/assets/img/2018-05-10-architecture-of-task-oriented-chat-bots/text3.png&quot; alt=&quot;Векторные представления&quot; class=&quot;center-image&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Затем последовательность векторов передается в компонент &lt;strong&gt;понимания естественного языка&lt;/strong&gt; (&lt;strong&gt;natural language understanding – NLU&lt;/strong&gt;) и комбинируется с
+текущим состоянием диалога (если до этого пользователь писал какие-либо сообщения, то текущая фраза уже должна рассматриваться в контексте) [&lt;a href=&quot;#r4&quot;&gt;4&lt;/a&gt;].
+NLU выполняет две подзадачи:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;идентификация задачи, которую хочет выполнить пользователь (&lt;strong&gt;intent classification&lt;/strong&gt;);&lt;/li&gt;
+  &lt;li&gt;выделение параметров задачи из сообщения пользователя (&lt;strong&gt;slot tagging&lt;/strong&gt;).&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Первая задача является задачей классификации. Вторая – задачей преобразования последовательности (seq2seq). Как правило, данные подзадачи решаются при помощи
+моделей машинного обучения. Может использоваться одна комбинированная нейронная сеть для решения двух задач одновременно, либо отдельная нейросеть для
+классификации задач и свой slot tagger для каждой задачи. Единственного универсального варианта реализации NLU не существует.
+Если задача определяется в большинстве случаев комбинацией представленных слотов (например, необходимо различать несколько видов поиска по различным параметрам),
+то с большей долей вероятности комбинированная модель покажет лучший результат. Если класс задачи в меньшей степени зависит от слотов, то стоит рассмотреть вариант с
+отдельными моделями.&lt;/p&gt;
+
+&lt;p&gt;Также существует множество вариантов архитектур моделей, котрые можно использовать для классификации и теггинга. Можно использовать двунаправленный LSTM, GRU, CNN, СNN с Gated Linear Unit [&lt;a href=&quot;#r5&quot;&gt;5&lt;/a&gt;],
+Q-RNN [&lt;a href=&quot;#r6&quot;&gt;6&lt;/a&gt;] и т.д. Помните, no free lunch [&lt;a href=&quot;#r7&quot;&gt;7&lt;/a&gt;]!&lt;/p&gt;
+
+&lt;p&gt;Допустим, фраза из нашего примера должна запускать задачу findPriceByNameAndMonth. Эта задача имеет два слота: name и month.
+Допустим, классификатор и теггер слотов корректно определили данную задачу и слоты:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://aikho.github.io/assets/img/2018-05-10-architecture-of-task-oriented-chat-bots/text4.png&quot; alt=&quot;Классификация и теггинг слотов&quot; class=&quot;center-image&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Теперь класс задачи и значения слотов передаются в &lt;strong&gt;менеджер диалогов&lt;/strong&gt; (&lt;strong&gt;dialog manager&lt;/strong&gt;). Менеджер диалогов запускает задачи, вызывая API &lt;strong&gt;внешних систем&lt;/strong&gt;, обновляет текущее &lt;strong&gt;состояние&lt;/strong&gt;
+(&lt;strong&gt;state&lt;/strong&gt;) и управляет ведением диалога с пользователем. Политика ведения диалога может быть реализована при помощи жестко описанного алгоритма, движка правил или модели машинного
+обучения. Зачем такие сложности? В приведенном выше примере все действительно просто: в одной фразе пользователя содержится указание на задачу и значения всех слотов для нее.
+Но что, если пользователь не укажет информацию для всех необходимых слотов? Тогда необходимо добавить чат-боту способность задавать уточняющие вопросы. Но что, если затруднительно точно
+определить, какую задачу имел в виду пользователь, и существует несколько вариантов того, какие именно слоты были пропущены? Поведение менеджера диалогов в данном случае может определятся
+моделью машинного обучения, а может программироваться при помощи правил.&lt;/p&gt;
+
+&lt;p&gt;Для того, чтобы сохранять контекст и информацию из предыдущих сообщений пользователя, менеджер диалогов обновляет
+состояние. Это состояние используется в NLU для того, чтобы учитывать контекст при классификации задач и теггинге слотов. Управление состоянием – достаточно сложная составляющая менеджера
+диалогов. Например, необходимо учитывать, что пользователь может “передумать” и потребовать выполнить другую задачу. Или потребовать выполнить другую задачу, но со слотами из предыдущей
+задачи.&lt;/p&gt;
+
+&lt;p&gt;Также менеджер диалогов отвечает за генерацию ответов пользователя. Для этого могут использоваться простые шаблоны, а могут и генеративные модели.&lt;/p&gt;
+
+&lt;h3 id=&quot;Заключение&quot;&gt;Заключение&lt;/h3&gt;
+
+&lt;p&gt;Чат-боты с обработкой естественного языка, ориентированные на выполнение определенных задач, представляют собой достаточно сложные гибридные системы, объединяющие модели машинного обучения,
+классические алгоритмы и движки правил. В данной статье рассмотрен общий подход к построению подобных систем, не касаясь деталей реализации, обучения нейронных сетей,
+обеспечения масштабируемости, интеграции с внешними системами и т.д.&lt;/p&gt;
+
+&lt;p&gt;Даже рассматривая архитектуру чат-ботов с NLP на высоком уровне, можно сделать вывод, что разработка
+собственного специализированного чат-бота может потребовать исследования и решения достаточно сложных задач. Это зависит во многом от того, насколько сложны и специализированы
+задания, выполняемые ботом, и как они формулируются пользователями.&lt;/p&gt;
+
+&lt;p&gt;Ссылки:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;&lt;a name=&quot;r1&quot;&gt;&lt;/a&gt; &lt;a href=&quot;https://www.youtube.com/watch?v=cPeKV46Xb_g&quot;&gt;Spoken Dialog Systems – Task Oriented Systems&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a name=&quot;r2&quot;&gt;&lt;/a&gt; &lt;a href=&quot;https://habr.com/company/yandex/blog/349372/&quot;&gt;Как устроена Алиса. Лекция Яндекса&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a name=&quot;r3&quot;&gt;&lt;/a&gt; &lt;a href=&quot;https://www.codeproject.com/Articles/51026/True-Natural-Language-Understanding-through-a-Conc&quot;&gt;True Natural Language Understanding through a Conceptual Language Understanding Engine&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a name=&quot;r4&quot;&gt;&lt;/a&gt; &lt;a href=&quot;http://www.cs.toronto.edu/~aditya/publications/contextual.pdf&quot;&gt;Easy contextual intent prediction and slot detection&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a name=&quot;r5&quot;&gt;&lt;/a&gt; &lt;a href=&quot;https://arxiv.org/abs/1612.08083v2&quot;&gt;Language Modeling with Gated Convolutional Networks (arXiv:1612.08083)&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a name=&quot;r6&quot;&gt;&lt;/a&gt; &lt;a href=&quot;https://arxiv.org/abs/1611.01576&quot;&gt;Quasi-Recurrent Neural Networks (arXiv:1611.01576)&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a name=&quot;r7&quot;&gt;&lt;/a&gt; &lt;a href=&quot;https://en.wikipedia.org/wiki/No_free_lunch_theorem&quot;&gt;No free lunch theorem&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;</content><author><name>Андрей Хобня</name></author><category term="ML" /><category term="NLP" /><category term="NLU" /><category term="Архитектура" /><summary type="html">В данной статье я попробую систематизировать современные подходы и собственный опыт построения чат-ботов, ориентированных на выполнение специализированных задач, формулируемых пользователями на естественном языке. Как правило, такие чат-боты представляют собой гибридные системы, объединяющие модели машинного обучения, классические алгоритмы и движки правил. Как они устроены?</summary></entry><entry><title type="html">Что автоматизирует AutoML?</title><link href="https://aikho.github.io/2018/05/01/what-does-automl-automate.html" rel="alternate" type="text/html" title="Что автоматизирует AutoML?" /><published>2018-05-01T18:20:00+03:00</published><updated>2018-05-01T18:20:00+03:00</updated><id>https://aikho.github.io/2018/05/01/what-does-automl-automate</id><content type="html" xml:base="https://aikho.github.io/2018/05/01/what-does-automl-automate.html">&lt;p&gt;В мае 2017 года исследователи из Google Brain team представили &lt;a href=&quot;https://research.googleblog.com/2017/05/using-machine-learning-to-explore.html&quot;&gt;AutoML&lt;/a&gt; – алгоритм,
 который позволяет автоматически создавать архитектуры нейронных сетей, используя обучение с подкреплением. Через несколько месяцев они успешно применили AutoML
 для создания нейросети &lt;a href=&quot;https://research.googleblog.com/2017/11/automl-for-large-scale-image.html&quot;&gt;NASNet&lt;/a&gt;. Многие высказывали мнение, что теперь создавать
 нейронные сети сможет каждый и не нужны будут специалисты в этой области. Однако, на данный момент создавать новые модели машинного обучения все так же сложно.
