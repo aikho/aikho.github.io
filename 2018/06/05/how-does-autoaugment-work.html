@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.4.0 -->
+<title>Как работает AutoAugment? | AIkho.github.io</title>
+<meta name="generator" content="Jekyll v3.7.3" />
+<meta property="og:title" content="Как работает AutoAugment?" />
+<meta name="author" content="Андрей Хобня" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="На днях Google представил AutoAugment – инструмент для оптимизации алгоритмов аугментации наборов данных при помощи машинного обучения с подкреплением. Как AutoML, только не для архитектуры нейронной сети, а для алгоритмов аугментации. Хайп в соцсетях по этому поводу не утихает. Но давайте разберемся, что именно сделали в Google и как это позволило улучшить результат распознавания объектов в CIFAR-10 на 0.65%. В этом нам поможет публикация авторов AutoAugment." />
+<meta property="og:description" content="На днях Google представил AutoAugment – инструмент для оптимизации алгоритмов аугментации наборов данных при помощи машинного обучения с подкреплением. Как AutoML, только не для архитектуры нейронной сети, а для алгоритмов аугментации. Хайп в соцсетях по этому поводу не утихает. Но давайте разберемся, что именно сделали в Google и как это позволило улучшить результат распознавания объектов в CIFAR-10 на 0.65%. В этом нам поможет публикация авторов AutoAugment." />
+<link rel="canonical" href="https://aikho.github.io/2018/06/05/how-does-autoaugment-work.html" />
+<meta property="og:url" content="https://aikho.github.io/2018/06/05/how-does-autoaugment-work.html" />
+<meta property="og:site_name" content="AIkho.github.io" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-06-05T21:00:00+03:00" />
+<script type="application/ld+json">
+{"description":"На днях Google представил AutoAugment – инструмент для оптимизации алгоритмов аугментации наборов данных при помощи машинного обучения с подкреплением. Как AutoML, только не для архитектуры нейронной сети, а для алгоритмов аугментации. Хайп в соцсетях по этому поводу не утихает. Но давайте разберемся, что именно сделали в Google и как это позволило улучшить результат распознавания объектов в CIFAR-10 на 0.65%. В этом нам поможет публикация авторов AutoAugment.","author":{"@type":"Person","name":"Андрей Хобня"},"@type":"BlogPosting","url":"https://aikho.github.io/2018/06/05/how-does-autoaugment-work.html","headline":"Как работает AutoAugment?","dateModified":"2018-06-05T21:00:00+03:00","datePublished":"2018-06-05T21:00:00+03:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://aikho.github.io/2018/06/05/how-does-autoaugment-work.html"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://aikho.github.io/feed.xml" title="AIkho.github.io" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">AIkho.github.io</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+              <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+              <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/rules/">Правила</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Как работает AutoAugment?</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2018-06-05T21:00:00+03:00" itemprop="datePublished">Jun 5, 2018
+      </time></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p>На днях Google представил <a href="https://ai.googleblog.com/2018/06/improving-deep-learning-performance.html">AutoAugment</a> – инструмент для оптимизации алгоритмов
+аугментации наборов данных при помощи машинного обучения с подкреплением. Как AutoML, только не для архитектуры нейронной сети, а для алгоритмов аугментации. Хайп в соцсетях по
+этому поводу не утихает. Но давайте разберемся, что именно сделали в Google и как это позволило улучшить результат распознавания объектов в CIFAR-10 на 0.65%.
+В этом нам поможет публикация авторов AutoAugment.</p>
+
+<p>Итак, в научной статье про AutoAugment [<a href="#r1">1</a>] в разделе 3 авторы пишут:</p>
+<blockquote>
+  <p>We formulate the problem of finding the best augmentation policy as a discrete search problem.
+In our search space, a policy consists of 5 sub-policies, each sub-policy consisting of two image
+operations to be applied in sequence, each operation is also associated with two hyperparameters: 1)
+the probability of applying the operation, and 2) the magnitude of the operation.</p>
+</blockquote>
+
+<p>Т.е. авторы рассматривают задачу нахождения лучших методов аугментации как задачу дискретного поиска в некотором пространстве возможных методов.
+Значит AutoAugment не может создать принципиально новый метод аугментации, а может лишь найти лучшую комбинацию из некоторого множества уже известных и
+определенных методов. Причем количество операций в комбинации тоже заранее определено. Метод аугментации делится на 5 подметодов, каждый из которых
+состоит из двух последовательных операций. Каждой операции соответствует два гиперпараметра: вероятностью применения и степень/величина применения.</p>
+
+<p>Из каких операций авторы формируют методы аугментации?</p>
+<blockquote>
+  <p>For generality, we considered all functions in PIL that accept an image as
+input and output an image. We additionally used two other promising augmentation techniques:
+Cutout [25] and SamplePairing [50]. The operations we searched over are ShearX/Y, TranslateX/Y,
+Rotate, AutoContrast, Invert, Equalize, Solarize, Posterize, Contrast, Color, Brightness, Sharpness,
+Cutout [25], Sample Pairing [50]. In total, we have 16 operations in our search space</p>
+</blockquote>
+
+<p>Из предыдущей цитаты нам известно, что используется 16 операций во всем пространстве поиска. Это не очень много. Например, библиотека imgaug поддерживает
+около 50 трансформаций.</p>
+
+<p>Сам алгоритм AutoAugment похож на AutoML. Используется рекуррентная нейронная сеть, которая генерирует методы аугментации (5 подметодов по две операции с
+гиперпараметрами). В качестве обратной связи для обучения с подкреплением используется точность дочерней нейронной сети (которая обучается распознавать
+объекты при помощи аугментированного набора данных). Вот как описывают алгоритм сами авторы:</p>
+<blockquote>
+  <p>The search algorithm has two components: a controller,
+which is a recurrent neural network, and the training algorithm, which is the Proximal Policy Optimization
+algorithm [52]. At each step, the controller predicts a decision produced by a softmax;
+the prediction is then fed into the next step as an embedding. In total the controller has 30 softmax
+predictions in order to predict 5 sub-policies, each with 2 operations, and each operation requiring an
+operation type, magnitude and probability.
+The controller is trained with a reward signal, which is how good the policy is in improving the
+generalization of a “child model” (a neural network trained as part of the search process). In our
+experiments, we set aside a validation set to measure the generalization of a child model. A child
+model is trained with augmented data generated by applying the 5 sub-policies on the training set (that
+does not contain the validation set). For each example in the mini-batch, one of the 5 sub-policies is
+chosen randomly to augment the image. The child model is then evaluated on the validation set to
+measure the accuracy, which is used as the reward signal to train the recurrent network controller</p>
+</blockquote>
+
+<p>Обратим внимание, что для измерения точности используется валидационный набор данных.</p>
+
+<p>Интуитивно, такая схема может работать лучше, чем ручной выбор методов аугментации, т.к. может более точно подобрать гиперпараметры трансформаций.
+Также, обучение с подкреплением для этой задачи скорее всего работает эффективней, чем простой перебор. Хотя авторы публикации отмечают следующее:</p>
+<blockquote>
+  <p>It might be possible to use a different discrete search algorithm such as genetic
+programming [21] or even random search [24] to improve the results in this paper.</p>
+</blockquote>
+
+<p>Интересное замечание.</p>
+
+<h3 id="Выводы">Выводы</h3>
+
+<p>AutoAugment – неплохой метод тюнинга методов аугментации наборов данных. AutoAugment не создает принципиально новые методы аугментации, а ищет лучшую
+комбинацию из некоторого множества определенных трансформаций. Причем каждая такая комбинация состоит из 5 подкомбинаций по две трансформации.
+Такой способ может работать лучше, чем ручной выбор методов аугментации, т.к. может более точно подобрать гиперпараметры трансформаций. Однако, AutoAugment не
+отменяет вдумчивого применения методов аугментации для вашей задачи, а является лишь методом их тюнинга.
+А что вы думаете про AutoAugment?</p>
+
+<p>Ссылки:</p>
+<ol>
+  <li><a name="r1"></a> <a href="https://arxiv.org/abs/1805.09501">AutoAugment: Learning Augmentation Policies from Data (arXiv:1805.09501)</a></li>
+</ol>
+
+  </div><div id="disqus_thread"></div>
+  <script>
+    var disqus_config = function () {
+      this.page.url = 'https://aikho.github.io/2018/06/05/how-does-autoaugment-work.html';
+      this.page.identifier = 'https://aikho.github.io/2018/06/05/how-does-autoaugment-work.html';
+    };
+
+    (function() {
+      var d = document, s = d.createElement('script');
+
+      s.src = 'https://andrei-khobnia-blog.disqus.com/embed.js';
+
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript><a class="u-url" href="/2018/06/05/how-does-autoaugment-work.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">AIkho.github.io</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Андрей Хобня</li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://www.twitter.com/AI_Kho_"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#twitter"></use></svg> <span class="username">AI_Kho_</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>Блог о машинном обучении и разработке интеллектуальных систем</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
